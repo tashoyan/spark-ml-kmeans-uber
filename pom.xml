@@ -10,11 +10,11 @@
 
 
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <encoding>UTF-8</encoding>
 
-        <scala.version>2.11.8</scala.version>
+        <scala.version>2.11.11</scala.version>
         <scala.binary.version>2.11</scala.binary.version>
 
         <!-- version = <spark_version>-mapr-<mapr_eco_version> -->
@@ -63,10 +63,6 @@
             <version>${scala.version}</version>
             <scope>provided</scope>
         </dependency>
- 
-
-   
-
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.binary.version}</artifactId>
@@ -74,8 +70,6 @@
             <scope>provided</scope>
         </dependency>
 
-
-        
     </dependencies>
    
    
