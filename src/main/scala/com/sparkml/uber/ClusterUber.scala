@@ -17,6 +17,7 @@ object ClusterUber {
   def main(args: Array[String]) {
 
     val spark: SparkSession = SparkSession.builder().appName("uber").getOrCreate()
+    spark.sparkContext.setLogLevel("WARN")
 
     import spark.implicits._
 
@@ -28,10 +29,11 @@ object ClusterUber {
     ))
 
     // Spark 2.1
-    val df: Dataset[Uber] = spark.read.option("inferSchema", "false").schema(schema).csv("/user/user01/data/uber.csv").as[Uber]
+    val df: Dataset[Uber] = spark.read.option("inferSchema", "false").schema(schema).csv("data/uber.csv").as[Uber]
 
     df.cache
     df.show
+    //TODO printSchema?
     df.schema
 
     val featureCols = Array("lat", "lon")
@@ -50,10 +52,23 @@ object ClusterUber {
     categories.show
     categories.createOrReplaceTempView("uber")
 
-    categories.select(month($"dt").alias("month"), dayofmonth($"dt").alias("day"), hour($"dt").alias("hour"), $"prediction").groupBy("month", "day", "hour", "prediction").agg(count("prediction").alias("count")).orderBy("day", "hour", "prediction").show
+    categories.select(
+      month($"dt").alias("month"),
+      dayofmonth($"dt").alias("day"),
+      hour($"dt").alias("hour"),
+      $"prediction"
+    ).groupBy("month", "day", "hour", "prediction")
+      .agg(count("prediction").alias("count"))
+      .orderBy("day", "hour", "prediction")
+      .show
 
-    categories.select(hour($"dt").alias("hour"), $"prediction").groupBy("hour", "prediction").agg(count("prediction")
-      .alias("count")).orderBy(desc("count")).show
+    categories.select(
+      hour($"dt").alias("hour"),
+      $"prediction"
+    ).groupBy("hour", "prediction")
+      .agg(count("prediction").alias("count"))
+      .orderBy(desc("count"))
+      .show
 
     categories.groupBy("prediction").count().show()
 
@@ -65,13 +80,13 @@ object ClusterUber {
      * uncomment below for various functionality:
     */
     // to save the model 
-    model.write.overwrite().save("/user/user01/data/savemodel")
+    model.write.overwrite().save("data/savemodel")
     // model can be  re-loaded like this
     // val sameModel = KMeansModel.load("/user/user01/data/savemodel")
     //  
     // to save the categories dataframe as json data
     val res = spark.sql("select dt, lat, lon, base, prediction as cid FROM uber order by dt")   
-    res.write.format("json").save("/user/user01/data/uber.json")
+    res.write.format("json").save("data/uber.json")
   }
 }
 
