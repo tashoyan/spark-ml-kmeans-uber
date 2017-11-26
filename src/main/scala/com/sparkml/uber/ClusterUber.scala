@@ -85,7 +85,7 @@ object ClusterUber {
     //  
     // to save the categories dataframe as json data
     val res = spark.sql("select dt, lat, lon, base, prediction as cid FROM uber order by dt")   
-    res.write.format("json").save("data/uber.json")
+    res.write.format("json").mode("overwrite").save("data/uber.json")
   }
 }
 
