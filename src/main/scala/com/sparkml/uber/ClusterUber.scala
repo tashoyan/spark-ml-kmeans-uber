@@ -33,8 +33,7 @@ object ClusterUber {
 
     df.cache
     df.show
-    //TODO printSchema?
-    df.schema
+    df.printSchema()
 
     val featureCols = Array("lat", "lon")
     val assembler = new VectorAssembler().setInputCols(featureCols).setOutputCol("features")
